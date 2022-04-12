@@ -7,10 +7,12 @@ import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
 import java.util.Collection;
+import java.util.ResourceBundle;
 
 @Repository
 public class RateDAOImpl implements RateDAO {
-    private JdbcTemplate template;
+    private final JdbcTemplate template;
+    private final ResourceBundle resourceBundle = ResourceBundle.getBundle("mySQLCommands");
 
     public RateDAOImpl(JdbcTemplate template) {
         this.template = template;
@@ -18,7 +20,12 @@ public class RateDAOImpl implements RateDAO {
 
     @Override
     public Rate createRate(Rate rate) {
-        template.update()
+        template.update(
+                String.format(resourceBundle.getString("create"),
+                        rate.getCourse(),
+                        rate.getEstimatedCurrency(),
+                        rate.getRelativeCurrency(),
+                        rate.getDate()));
     }
 
     @Override
