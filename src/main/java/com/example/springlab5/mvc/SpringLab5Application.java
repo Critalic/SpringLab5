@@ -1,4 +1,4 @@
-package com.example.springlab5;
+package com.example.springlab5.mvc;
 
 import com.ulisesbocchio.jasyptspringboot.annotation.EnableEncryptableProperties;
 import org.springframework.boot.SpringApplication;

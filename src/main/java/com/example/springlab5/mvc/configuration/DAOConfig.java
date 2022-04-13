@@ -1,4 +1,4 @@
-package com.example.springlab5.configuration;
+package com.example.springlab5.mvc.configuration;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.jdbc.DataSourceBuilder;
