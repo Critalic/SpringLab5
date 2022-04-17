@@ -4,10 +4,13 @@ import com.example.springlab5.mvc.DAO.RateDAO;
 import com.example.springlab5.mvc.model.Rate;
 import com.example.springlab5.mvc.model.RateForRequest;
 import com.example.springlab5.utils.PreparedStatementBuilder;
+import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.stereotype.Repository;
 
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.sql.Statement;
 import java.time.LocalDate;
 import java.util.Collection;
@@ -22,7 +25,8 @@ public class RateDAOImpl implements RateDAO {
     public RateDAOImpl(JdbcTemplate template) {
         this.template = template;
     }
-//TODO: exceptions
+
+    //TODO: exceptions
     @Override
     public Rate createRate(Rate rate) {
         GeneratedKeyHolder keyHolder = new GeneratedKeyHolder();
@@ -38,6 +42,24 @@ public class RateDAOImpl implements RateDAO {
     }
 
     @Override
+    public int[] createRates(Rate... rates) {
+        return template.batchUpdate(resourceBundle.getString("create"), new BatchPreparedStatementSetter() {
+            @Override
+            public void setValues(PreparedStatement ps, int i) throws SQLException {
+                ps.setDouble(1, rates[i].getCourse());
+                ps.setString(2, rates[i].getEstimatedCurrency().toString());
+                ps.setString(3, rates[i].getRelativeCurrency().toString());
+                ps.setObject(4, rates[i].getDate());
+            }
+
+            @Override
+            public int getBatchSize() {
+                return rates.length;
+            }
+        });
+    }
+
+    @Override
     public Collection<RateForRequest> readRates() {
         return template.query(resourceBundle.getString("selectAll"), (rs, rowNum) -> new RateForRequest(
                 rs.getInt(1), rs.getDouble(2), rs.getString(3),
@@ -45,7 +67,19 @@ public class RateDAOImpl implements RateDAO {
     }
 
     @Override
-    public void updateRate(Rate rateToUpdate, Rate updated) {
+    public int updateRate(Rate rateToUpdate, Rate updated) {
+        return template.update(con -> new PreparedStatementBuilder(
+                con.prepareStatement(resourceBundle.getString("updateSpecific")))
+                .setDouble(1, updated.getCourse())
+                .setString(2, updated.getEstimatedCurrency().toString())
+                .setString(3, updated.getRelativeCurrency().toString())
+                .setObject(4, updated.getDate())
+                .setDouble(5, rateToUpdate.getCourse())
+                .setString(6, rateToUpdate.getEstimatedCurrency().toString())
+                .setString(7, rateToUpdate.getRelativeCurrency().toString())
+                .setObject(8, rateToUpdate.getDate())
+                .build()
+        ) ;
     }
 
     @Override
@@ -57,6 +91,24 @@ public class RateDAOImpl implements RateDAO {
                 .setString(3, rateToDelete.getRelativeCurrency().toString())
                 .setObject(4, rateToDelete.getDate())
                 .build());
+    }
+
+    @Override
+    public int[] deleteRates(Rate... ratesToDelete) {
+        return template.batchUpdate(resourceBundle.getString("deleteSpecific"), new BatchPreparedStatementSetter() {
+            @Override
+            public void setValues(PreparedStatement ps, int i) throws SQLException {
+                ps.setDouble(1, ratesToDelete[i].getCourse());
+                ps.setString(2, ratesToDelete[i].getEstimatedCurrency().toString());
+                ps.setString(3, ratesToDelete[i].getRelativeCurrency().toString());
+                ps.setObject(4, ratesToDelete[i].getDate());
+            }
+
+            @Override
+            public int getBatchSize() {
+                return ratesToDelete.length;
+            }
+        });
     }
 
     @Override

@@ -1,5 +1,7 @@
 package com.example.springlab5.mvc;
 
+import com.example.springlab5.mvc.DAO.MySQLImpl.RateDAOImpl;
+import com.example.springlab5.mvc.model.Rate;
 import com.ulisesbocchio.jasyptspringboot.annotation.EnableEncryptableProperties;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -7,6 +9,8 @@ import org.springframework.context.ApplicationContext;
 
 import javax.sql.DataSource;
 import java.sql.SQLException;
+import java.time.LocalDate;
+import java.util.Currency;
 
 @SpringBootApplication
 @EnableEncryptableProperties

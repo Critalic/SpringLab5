@@ -9,9 +9,14 @@ import java.util.Currency;
 
 public interface RateDAO {
     Rate createRate(Rate rate);
+
+    int[] createRates(Rate... rates);
+
     Collection<RateForRequest> readRates();
-    void updateRate(Rate rateToUpdate, Rate updated);
+    int updateRate(Rate rateToUpdate, Rate updated);
     int deleteRate(Rate rateToDelete);
+
+    int[] deleteRates(Rate... ratesToDelete);
 
     Collection<Rate> getRatesByDate(LocalDate date);
     Collection<Rate> getRatesByCurrency(Currency currency);
